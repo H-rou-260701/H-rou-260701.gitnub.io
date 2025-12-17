@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>K-POP Fan Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--pink:#ff4fd8;--purple:#7b5cff;--card:rgba(255,255,255,.12);--glass:blur(12px)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Poppins,sans-serif;background:linear-gradient(120deg,#0f0f1a,#1b1b3a);color:#fff}
+    header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;position:sticky;top:0;background:rgba(0,0,0,.4);backdrop-filter:var(--glass)}
+    header h1{margin:0;background:linear-gradient(45deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    nav a{margin-left:16px;color:#fff;text-decoration:none;font-size:.9rem;opacity:.8}
+    nav a:hover{opacity:1}
+    .container{padding:32px}
+    section{margin-bottom:48px}
+    h2{border-left:4px solid var(--pink);padding-left:12px}
+    .search-box input{width:100%;max-width:420px;padding:12px 16px;border-radius:999px;border:none}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
+    .card{background:var(--card);backdrop-filter:var(--glass);border-radius:16px;padding:12px;text-align:center}
+    .card img{width:100%;height:240px;object-fit:cover;border-radius:12px;margin-bottom:8px}
+    .name{font-size:.85rem;line-height:1.4}
+    .fav-btn{margin-top:8px;padding:6px 12px;border:none;border-radius:999px;background:linear-gradient(45deg,var(--pink),var(--purple));color:#fff;cursor:pointer;font-size:.75rem}
+    textarea{width:100%;border:none;border-radius:12px;padding:12px}
+    footer{text-align:center;padding:24px;font-size:.75rem;opacity:.6}
+  </style>
+</head>
+<body>
+<header>
+  <h1>K-POP Fan Hub</h1>
+  <nav>
+    <a href="#search">Search</a>
+    <a href="#idols">Idols</a>
+    <a href="#actress">Actress</a>
+    <a href="#actor">Actor</a>
+    <a href="#cheer">應援牆</a>
+    <a href="#favorites">收藏</a>
+  </nav>
+</header>
+
+<div class="container">
+  <section id="search">
+    <h2>Search</h2>
+    <div class="search-box"><input id="searchInput" placeholder="搜尋 idol / actor / actress"></div>
+  </section>
+
+  <section id="idols"><h2>Idols</h2><div id="idolGrid" class="grid"></div></section>
+  <section id="actress"><h2>Actress</h2><div id="actressGrid" class="grid"></div></section>
+  <section id="actor"><h2>Actor</h2><div id="actorGrid" class="grid"></div></section>
+
+  <section id="cheer">
+    <h2>應援牆</h2>
+    <div class="card">
+      <textarea id="cheerInput" placeholder="寫下你的應援文字…"></textarea>
+      <button class="fav-btn" onclick="addCheer()">送出應援</button>
+    </div>
+    <div id="cheerList" class="grid" style="margin-top:16px"></div>
+  </section>
+
+  <section id="favorites"><h2>我的收藏</h2><div id="favGrid" class="grid"></div></section>
+</div>
+
+<footer>© 2025 K-POP Fan Hub（作業示範）</footer>
+
+<script>
+// ===== 資料 =====
+const idols = [
+  // Stray Kids
+  ['金昇玟','김승민','Seungmin Stray Kids'],['李旻浩','이민호','Lee Know Stray Kids'],['韓知城','한지성','Han Jisung Stray Kids'],['徐彰彬','서창빈','Changbin Stray Kids'],['梁精寅','양정인','I.N Stray Kids'],['黃鉉辰','황현진','Hyunjin Stray Kids'],['方燦','방찬','Bang Chan Stray Kids'],['Felix','필릭스','Felix Stray Kids'],
+
+  // BTS
+  ['RM','알엠','RM BTS'],['Jin','진','Jin BTS'],['SUGA','슈가','Suga BTS'],['j-hope','제이홉','J-Hope BTS'],['Jimin','지민','Jimin BTS'],['V','뷔','V BTS'],['Jungkook','정국','Jungkook BTS'],
+
+  // BLACKPINK
+  ['Jennie','제니','Jennie BLACKPINK'],['Jisoo','지수','Jisoo BLACKPINK'],['Rosé','로제','Rose BLACKPINK'],['Lisa','리사','Lisa BLACKPINK'],
+
+  // aespa
+  ['Karina','카리나','Karina aespa'],['Winter','윈터','Winter aespa'],['Giselle','지젤','Giselle aespa'],['Ningning','닝닝','Ningning aespa'],
+
+  // IVE
+  ['安兪眞','안유진','Ahn Yujin IVE'],['張員瑛','장원영','Jang Wonyoung IVE'],['Rei','레이','Rei IVE'],['Liz','리즈','Liz IVE'],['Leeseo','이서','Leeseo IVE'],['Gaeul','가을','Gaeul IVE'],
+
+  // LE SSERAFIM
+  ['宮脇咲良','미야와키 사쿠라','Sakura Le Sserafim'],['金采源','김채원','Kim Chaewon Le Sserafim'],['許允眞','허윤진','Huh Yunjin Le Sserafim'],['中村一葉','나카무라 카즈하','Kazuha Le Sserafim'],['洪恩採','홍은채','Hong Eunchae Le Sserafim'],
+
+  // NewJeans
+  ['Minji','민지','Minji NewJeans'],['Hanni','하니','Hanni NewJeans'],['Danielle','다니엘','Danielle NewJeans'],['Haerin','해린','Haerin NewJeans'],['Hyein','혜인','Hyein NewJeans'],
+
+  // (G)I-DLE
+  ['田小娟','전소연','Jeon Soyeon GIDLE'],['宋雨琦','송우기','Yuqi GIDLE'],['葉舒華','예슈화','Shuhua GIDLE'],['趙美延','조미연','Miyeon GIDLE'],['金珉妮','김민니','Minnie GIDLE'],
+
+  // SOLO / Others
+  ['IU','아이유','IU singer'],['Taeyeon','태연','Taeyeon SNSD'],['太妍','태연','Taeyeon Girls Generation'],['HyunA','현아','HyunA'],['Zico','지코','Zico'],['GD','지드래곤','G-Dragon'],['Jennie Kim','제니 김','Jennie Kim solo']
+];
+
+const actresses = [
+  ['宋慧喬','송혜교','Song Hye-kyo'],['全智賢','전지현','Jun Ji-hyun'],['金泰梨','김태리','Kim Tae-ri'],['金高銀','김고은','Kim Go-eun'],['裴秀智','배수지','Bae Suzy'],['IU','아이유','IU actress'],['朴信惠','박신혜','Park Shin-hye'],['孫藝珍','손예진','Son Ye-jin'],
+  ['韓孝周','한효주','Han Hyo-joo'],['李聖經','이성경','Lee Sung-kyung'],['申敏兒','신민아','Shin Min-a'],['金智媛','김지원','Kim Ji-won'],['文彩元','문채원','Moon Chae-won'],['徐睿知','서예지','Seo Ye-ji'],
+  ['金裕貞','김유정','Kim Yoo-jung'],['金所泫','김소현','Kim So-hyun'],['朴寶英','박보영','Park Bo-young'],['南志鉉','남지현','Nam Ji-hyun'],['高雅拉','고아라','Go Ara'],['雪炫','설현','Seolhyun'],
+  ['林允兒','임윤아','Im Yoona'],['秀英','수영','Sooyoung'],['Jessica','제시카','Jessica Jung'],['Krystal','크리스탈','Krystal Jung'],
+  ['蔡秀彬','채수빈','Chae Soo-bin'],['金惠允','김혜윤','Kim Hye-yoon'],['金世正','김세정','Kim Se-jeong'],['金智恩','김지은','Kim Ji-eun'],
+  ['李主儐','이주빈','Lee Joo-bin'],['陳世娫','진세연','Jin Se-yeon'],['姜漢娜','강한나','Kang Han-na'],['吳漣序','오연서','Oh Yeon-seo'],['高甫潔','고보결','Go Bo-gyeol'],
+  ['金香起','김향기','Kim Hyang-gi'],['盧允瑞','노윤서','Roh Yoon-seo'],['李清娥','이청아','Lee Chung-ah'],
+  ['文佳煐','문가영','Moon Ga-young'],['高允貞','고윤정','Go Youn-jung'],['金多美','김다미','Kim Da-mi'],['申惠善','신혜선','Shin Hye-sun'],['李哈妮','이하늬','Lee Ha-nui'],['張娜拉','장나라','Jang Na-ra'],['崔智友','최지우','Choi Ji-woo'],
+  ['裴斗娜','배두나','Bae Doona'],['韓志旼','한지민','Han Ji-min'],['金喜善','김희선','Kim Hee-sun'],['廉晶雅','염정아','Yum Jung-ah'],['金成鈞','김성균','Kim Sung-kyun actress'],['高我星','고아성','Go Ah-sung']
+];
+
+const actors = [
+  // 主流與中生代
+  ['孔劉','공유','Gong Yoo'],['李敏鎬','이민호','Lee Min-ho actor'],['朴敘俊','박서준','Park Seo-joon'],['玄彬','현빈','Hyun Bin'],['宋仲基','송중기','Song Joong-ki'],
+  ['柳俊烈','류준열','Ryu Jun-yeol'],['金南佶','김남길','Kim Nam-gil'],['吳政世','오정세','Oh Jung-se'],['金成均','김성균','Kim Sung-kyun'],
+  ['趙震雄','조진웅','Jo Jin-woong'],['朴成雄','박성웅','Park Sung-woong'],['張赫','장혁','Jang Hyuk'],['權相佑','권상우','Kwon Sang-woo'],['蘇志燮','소지섭','So Ji-sub'],['趙寅成','조인성','Jo In-sung'],
+
+  // 年輕男演員
+  ['南柱赫','남주혁','Nam Joo-hyuk'],['朴炯植','박형식','Park Hyung-sik'],['池昌旭','지창욱','Ji Chang-wook'],['李鍾碩','이종석','Lee Jong-suk'],['徐康俊','서강준','Seo Kang-joon'],
+  ['丁海寅','정해인','Jung Hae-in'],['安孝燮','안효섭','Ahn Hyo-seop'],['車銀優','차은우','Cha Eun-woo'],['邊佑錫','변우석','Byeon Woo-seok'],['李到晛','이도현','Lee Do-hyun'],
+  ['張基龍','장기용','Jang Ki-yong'],['金英光','김영광','Kim Young-kwang'],['任時完','임시완','Im Si-wan'],['朴成焄','박성훈','Park Sung-hoon'],['朴寶劍','박보검','Park Bo-gum'],
+
+  // 新世代
+  ['金曜漢','김요한','Kim Yo-han'],['羅門','로운','Rowoon'],['黃寅燁','황인엽','Hwang In-yeop'],['金永大','김영대','Kim Young-dae'],
+  ['李宰旭','이재욱','Lee Jae-wook'],['宋江','송강','Song Kang'],['洪京','홍경','Hong Kyung'],['姜勳','강훈','Kang Hoon'],['崔顯旭','최현욱','Choi Hyun-wook'],
+
+  // 其他
+  ['金宇彬','김우빈','Kim Woo-bin'],['姜棟元','강동원','Kang Dong-won'],['河正宇','하정우','Ha Jung-woo'],['李準基','이준기','Lee Joon-gi'],['李東旭','이동욱','Lee Dong-wook'],['池晟','지성','Ji Sung'],['李秉憲','이병헌','Lee Byung-hun']
+];
+
+// ===== Render（避免使用保留字與新語法） =====
+function render(list, el){
+  var html = '';
+  for(var i=0;i<list.length;i++){
+    var n = list[i];
+    html += '<div class="card">'
+      + '<img data-q="'+ n[2] +'" alt="'+ n[2] +'" />'
+      + '<div class="name">'+ n[0] +'<br>'+ n[1] +'<br>'+ n[2] +'</div>'
+      + '<button class="fav-btn" data-name="'+ n[2] +'">加入收藏</button>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+
+  var imgs = el.querySelectorAll('img[data-q]');
+  for(var j=0;j<imgs.length;j++){
+    (function(img){
+      var q = encodeURIComponent(img.getAttribute('data-q'));
+      fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + q)
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){
+          if(d && d.thumbnail && d.thumbnail.source){
+            img.src = d.thumbnail.source;
+          }else{
+            img.src = 'https://via.placeholder.com/300x400?text=No+Image';
+          }
+        })
+        .catch(function(){ img.src='https://via.placeholder.com/300x400?text=No+Image'; });
+    })(imgs[j]);
+  }
+}
+
+function renderAll(){
+  render(idols, idolGrid);
+  render(actresses, actressGrid);
+  render(actors, actorGrid);
+  renderFavs();
+}
+
+// ===== 搜尋 =====
+function doSearch(){
+  var q = searchInput.value.toLowerCase();
+  function f(list){
+    return list.filter(function(n){
+      return n[0].toLowerCase().indexOf(q)>-1 || n[1].toLowerCase().indexOf(q)>-1 || n[2].toLowerCase().indexOf(q)>-1;
+    });
+  }
+  render(f(idols), idolGrid);
+  render(f(actresses), actressGrid);
+  render(f(actors), actorGrid);
+}
+
+// ===== 收藏 =====
+function saveFav(name){
+  var fav = JSON.parse(localStorage.getItem('fav')||'[]');
+  if(fav.indexOf(name)===-1) fav.push(name);
+  localStorage.setItem('fav', JSON.stringify(fav));
+  renderFavs();
+}
+function renderFavs(){
+  var fav = JSON.parse(localStorage.getItem('fav')||'[]');
+  if(!fav.length){ favGrid.innerHTML='<p style="opacity:.7">尚未收藏任何人</p>'; return; }
+  var h='';
+  for(var i=0;i<fav.length;i++){
+    h += '<div class="card"><div class="name">'+ fav[i] +'</div></div>';
+  }
+  favGrid.innerHTML = h;
+}
+
+// ===== 應援牆 =====
+function addCheer(){
+  var t = cheerInput.value.trim();
+  if(!t) return;
+  var d = document.createElement('div');
+  d.className = 'card';
+  d.innerHTML = '<div class="name">'+ t +'</div>';
+  cheerList.prepend(d);
+  cheerInput.value = '';
+}
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function(){
+  renderAll();
+  searchInput.addEventListener('input', doSearch);
+  document.body.addEventListener('click', function(e){
+    if(e.target && e.target.className.indexOf('fav-btn')>-1){ saveFav(e.target.getAttribute('data-name')); }
+  });
+});
+</script>
+</body>
+</html>
