@@ -300,27 +300,10 @@ const actors = [
 
 function render(list, el){
   el.innerHTML = list.map(n=>`
-  <div class="card">
-    <img src="" data-name="${n[2]}" onerror="this.src='https://via.placeholder.com/300x400'">
-    <div class="name">${n[0]}<br>${n[1]}<br>${n[2]}</div>
-    <button class="fav-btn" onclick="saveFav('${n[2]}')">加入收藏</button>
-  </div>`).join('');
-
-  // 從 Wikipedia / Wikimedia 自動抓近期照片（示範）
-  el.querySelectorAll('img[data-name]').forEach(img=>{
-    const q = encodeURIComponent(img.dataset.name);
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${q}`)
-      .then(r=>r.ok?r.json():null)
-      .then(d=>{
-        if(d && d.thumbnail && d.thumbnail.source){ img.src = d.thumbnail.source; }
-        else { img.src = 'https://via.placeholder.com/300x400'; }
-      })
-      .catch(()=> img.src='https://via.placeholder.com/300x400');
-  });
-}" onerror="this.src='https://via.placeholder.com/300x400'">
-    <div class="name">${n[0]}<br>${n[1]}<br>${n[2]}</div>
-    <button class="fav-btn" onclick="saveFav('${n[2]}')">加入收藏</button>
-  </div>`).join('');
+    <div class="card">
+      <div class="name">${n[0]}<br>${n[1]}<br>${n[2]}</div>
+      <button class="fav-btn" onclick="saveFav('${n[2]}')">加入收藏</button>
+    </div>`).join('');
 }
 
 render(idols, idolGrid);
@@ -337,15 +320,22 @@ function saveFav(name){
 
 function renderFavs(){
   const fav = JSON.parse(localStorage.getItem('fav')||'[]');
-  if(fav.length===0){ favGrid.innerHTML = '<p style="opacity:.7">尚未收藏任何人</p>'; return; }
+  if(fav.length===0){ 
+    favGrid.innerHTML = '<p style="opacity:.7">尚未收藏任何人</p>'; 
+    return; 
+  }
   favGrid.innerHTML = fav.map(n=>`
     <div class="card">
-      <img src="" data-name="${n}" onerror="this.src='https://via.placeholder.com/300x400'">
+      <div class="name">${n}</div>
+    </div>`).join('');
+}
+  favGrid.innerHTML = fav.map(n=>`
+    <div class="card">
+      
       <div class="name">${n}</div>
     </div>`).join('');
 
-  favGrid.querySelectorAll('img[data-name]').forEach(img=>{
-    const q = encodeURIComponent(img.dataset.name);
+  
     fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${q}`)
       .then(r=>r.ok?r.json():null)
       .then(d=>{ if(d && d.thumbnail) img.src=d.thumbnail.source; })
@@ -373,4 +363,6 @@ function addSupport(){
 
 </body>
 </html>
+
+
 
