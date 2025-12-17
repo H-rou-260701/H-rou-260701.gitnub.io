@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Pop Wonderland - 偶像收藏館</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 為了方便您在單一檔案內查看，我將部分重要CSS也放在這裡 */
+        .idol-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .kpop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            padding: 20px 5%;
+        }
+        /* 拍立得區樣式 */
+        #polaroid-zone { text-align: center; }
+        #webcam-preview, #photo-canvas {
+            width: 90%;
+            max-width: 600px;
+            border: 5px solid #ff007f;
+            margin: 20px auto;
+            display: block;
+        }
+        #polaroid-editor {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .sticker-icon {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.2s;
+        }
+        .sticker-icon:hover {
+            border: 2px solid #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <audio id="kpop-bgm" controls loop hidden></audio>
+    
+    <header id="main-nav">
+        <div class="logo">K-POP FANTASY</div>
+        <input type="text" id="search-bar" placeholder="🔍 搜尋偶像、演員...">
+        <nav>
+            <a href="#idols-section">💖 Idols (偶像)</a>
+            <a href="#actress-section">🎬 Actress (女演員)</a>
+            <a href="#actor-section">🎭 Actor (男演員)</a>
+            <a href="#polaroid-zone">📸 拍立得專區</a>
+            <a href="#cheering-wall">📣 應援牆</a>
+            <a href="#comments-area">💬 留言區</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="idols-section" class="content-block">
+            <h2>⭐ Idols (偶像名單)</h2>
+            <div id="idols-grid" class="kpop-grid">
+                </div>
+        </section>
+
+        <section id="actress-section" class="content-block">
+            <h2>🎬 Actress (女演員)</h2>
+            <div id="actress-grid" class="kpop-grid">
+                </div>
+        </section>
+        
+        <section id="actor-section" class="content-block">
+            <h2>🎭 Actor (男演員)</h2>
+            <div id="actor-grid" class="kpop-grid">
+                </div>
+        </section>
+
+        <section id="polaroid-zone" class="content-block">
+            <h2>📸 拍立得專區 - 創造你的獨家周邊</h2>
+            <div class="polaroid-tool-area">
+                <button id="start-camera">點擊進入拍照模式</button>
+                <div id="polaroid-editor" style="display: none;">
+                    <video id="webcam-preview" autoplay></video>
+                    <canvas id="photo-canvas" style="display:none; cursor: crosshair;"></canvas>
+                    <button id="take-photo">📷 拍照</button>
+                    
+                    <div id="sticker-selection">
+                        <h3>拖曳貼紙到照片上：</h3>
+                        </div>
+                </div>
+                <div class="print-guide">
+                    <h3>📄 超商列印指南</h3>
+                    <p>完成作品後，點擊下載圖片，可至 **7-11 ibon / 全家 FamiPort** 選擇「圖片列印」服務，將檔案上傳至雲端或隨身碟即可列印。</p>
+                </div>
+                <div id="download-area"></div>
+            </div>
+        </section>
+
+        <section id="cheering-wall" class="content-block">
+            <h2>📣 應援牆 - 留下你的訊息</h2>
+            <textarea id="cheer-input" placeholder="在這裡留下你對偶像的應援訊息..."></textarea>
+            <button onclick="postCheer()">送出應援</button>
+            <div id="cheers-display">
+                </div>
+        </section>
+
+        <section id="comments-area" class="content-block">
+            <h2>💬 留言區 - 交流討論</h2>
+            <textarea id="comment-input" placeholder="在這裡留下你的討論..."></textarea>
+            <button onclick="postComment()">送出留言</button>
+            <div id="comments-display">
+                </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
