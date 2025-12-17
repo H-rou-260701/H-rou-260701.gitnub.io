@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>K‑POP Fan Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #ff4fd8;
+      --purple: #7b5cff;
+      --dark: #0f0f1a;
+      --card: rgba(255,255,255,0.12);
+      --glass: blur(12px);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #0f0f1a, #1b1b3a);
+      color: #fff;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      backdrop-filter: var(--glass);
+      background: rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, var(--pink), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav a {
+      margin-left: 16px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    nav a:hover { opacity: 1; }
+
+    .container {
+      padding: 32px;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    section h2 {
+      margin-bottom: 16px;
+      font-size: 1.3rem;
+      border-left: 4px solid var(--pink);
+      padding-left: 12px;
+    }
+
+    /* Search */
+    .search-box input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      font-size: 0.95rem;
+    }
+
+    /* Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: var(--glass);
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .card:hover { transform: translateY(-6px); }
+
+    .card img {
+      width: 100%;
+      border-radius: 12px;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      margin-bottom: 8px;
+      background: #333;
+    }
+
+    .name {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .fav-btn {
+      margin-top: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(45deg, var(--pink), var(--purple));
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    /* Polaroid */
+    .polaroid {
+      background: #fff;
+      color: #000;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .polaroid img {
+      width: 100%;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    /* Message wall */
+    .message-box textarea {
+      width: 100%;
+      max-width: 500px;
+      height: 100px;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      resize: none;
+    }
+
+    .message {
+      margin-top: 12px;
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>K‑POP Fan Hub</h1>
+  <nav>
+    <a href="#search">Search</a>
+    <a href="#idols">Idols</a>
+    <a href="#actress">Actress</a>
+    <a href="#actor">Actor</a>
+    <a href="#polaroid">拍立得</a>
+    <a href="#support">應援牆</a>
+    <a href="#message">留言</a>
+  </nav>
+</header>
+
+<audio id="bgm" loop></audio>
+
+<div class="container">
+
+  <!-- Search -->
+  <section id="search">
+    <h2>Search</h2>
+    <div class="search-box">
+      <input type="text" placeholder="搜尋 idol / actor / actress" />
+    </div>
+  </section>
+
+  <!-- Idols -->
+  <section id="idols">
+    <h2>Idols</h2>
+    <div class="grid" id="idolGrid"></div>
+  </section>
+
+  <!-- Actress -->
+  <section id="actress">
+    <h2>Actress</h2>
+    <div class="grid" id="actressGrid"></div>
+  </section>
+
+  <!-- Actor -->
+  <section id="actor">
+    <h2>Actor</h2>
+    <div class="grid" id="actorGrid"></div>
+  </section>
+
+  <!-- Polaroid -->
+  <section id="polaroid">
+    <h2>拍立得專區（即時拍照）</h2>
+    <video id="camera" autoplay playsinline style="width:240px;border-radius:12px;"></video>
+    <br><br>
+    <button class="fav-btn" onclick="takePhoto()">📸 拍照</button>
+    <canvas id="photo" width="240" height="320" style="display:block;margin-top:12px;background:#fff"></canvas>
+    <p style="font-size:0.8rem;opacity:0.8">拍完後可拖拉貼紙（示範）→ 另存圖片列印</p>
+  </section>
+
+  <!-- Support wall -->
+  <section id="support">
+    <h2>應援牆</h2>
+    <input id="supportInput" placeholder="輸入你的應援文字" style="padding:8px;border-radius:8px;border:none;">
+    <button class="fav-btn" onclick="addSupport()">送出</button>
+    <div id="supportList"></div>
+  </section>
+
+  <!-- Message -->
+  <section id="message">
+    <h2>留言區</h2>
+    <div class="message-box">
+      <textarea placeholder="留下你的應援或心得..."></textarea>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  © 2025 K‑POP Fan Hub（學習用示範）
+</footer>
+
+<script>
+/* ===== 資料 ===== */
+const idols = [
+  ['金智秀','김지수','JISOO'],['金珍妮','김제니','JENNIE'],['朴彩英','박채영','ROSÉ'],['Lisa','리사','LISA'],
+  ['田柾國','전정국','JUNGKOOK'],['金泰亨','김태형','V'],['朴智旻','박지민','JIMIN'],['金碩珍','김석진','JIN'],['金南俊','김남준','RM'],
+  ['張員瑛','장원영','WONYOUNG'],['安兪真','안유진','YUJIN'],['Sakura','사쿠라','SAKURA'],['金采源','김채원','CHAEWON'],
+  ['宋雨琦','송우기','YUQI'],['田小娟','전소연','SOYEON'],['MINNIE','민니','MINNIE'],['MIYEON','미연','MIYEON'],
+  ['崔然竣','최연준','YEONJUN'],['崔秀彬','최수빈','SOOBIN'],['休寧凱','휴닝카이','HUENINGKAI'],
+  ['李龍馥','이용복','FELIX'],['黃鉉辰','황현진','HYUNJIN'],['方燦','방찬','BANG CHAN'],
+  ['Mark','마크','MARK'],['李泰容','이태용','TAEYONG'],['中本悠太','유타','YUTA'],
+  ['Karina','카리나','KARINA'],['Winter','윈터','WINTER'],['Ningning','닝닝','NINGNING'],
+  ['IU','아이유','IU'],['太妍','태연','TAEYEON'],['SANA','사나','SANA'],['志效','지효','JIHYO'],
+  ['G-Dragon','지드래곤','G-DRAGON'],['太陽','태양','TAEYANG'],['TOP','탑','TOP'],
+  ['崔勝澈','최승철','S.COUPS'],['尹淨漢','윤정한','JEONGHAN'],['權順榮','권순영','HOSHI'],
+
+  /* 追加成員 */
+  ['金昇玟','김승민','SEUNGMIN'],['韓知城','한지성','HAN'],['李旻浩','이민호','LEE KNOW'],['徐彰彬','서창빈','CHANGBIN'],['梁精寅','양정인','I.N'],
+  ['葉舒華','예슈화','SHUHUA'],
+  ['Ruka','루카','RUKA'],['Pharita','파리타','PHARITA'],['Asa','아사','ASA'],['Ahyeon','아현','AHYEON'],['Rami','라미','RAMI'],['Rora','로라','RORA'],['Chiquita','치키타','CHIQUITA'],
+  ['Bailey','베일리','BAILEY'],['Woochan','우찬','WOOCHAN'],['Youngseo','영서','YOUNGSEO'],['Tarzzan','타잔','TARZZAN'],['Annie','애니','ANNIE'],
+  ['克羅伊李','클로이 리','CHLOE LEE'],['田中杏奈','타나카 안나','ANNA TANAKA'],['埃拉格羅斯','엘라 그로스','ELLA GROSS'],
+  ['Soo-in','수인','SOOIN'],['Narin','나린','NARIN']
+];
+
+const actresses = [
+  
+  ['裴秀智','배수지','SUZY'],['宋慧喬','송혜교','SONG HYE KYO'],['金智媛','김지원','KIM JI WON'],['朴信惠','박신혜','PARK SHIN HYE'],['韓韶禧','한소희','HAN SO HEE'],
+  ['金高銀','김고은','KIM GO EUN'],['徐玄振','서현진','SEO HYUN JIN'],['IU','아이유','IU'],['朴寶英','박보영','PARK BO YOUNG'],['金泰梨','김태리','KIM TAE RI'],
+  ['林允兒','임윤아','YOONA'],['秀智','수지','SUZY'],['金惠秀','김혜수','KIM HYE SOO'],['全智賢','전지현','JUN JI HYUN'],['孫藝珍','손예진','SON YE JIN'],
+  ['韓佳人','한가인','HAN GA IN'],['申世景','신세경','SHIN SE KYUNG'],['李聖經','이성경','LEE SUNG KYUNG'],['金所炫','김소현','KIM SO HYUN'],['金裕貞','김유정','KIM YOO JUNG'],
+  ['文彩元','문채원','MOON CHAE WON'],['高雅羅','고아라','GO ARA'],['朴素丹','박소담','PARK SO DAM'],['張娜拉','장나라','JANG NA RA'],['韓智敏','한지민','HAN JI MIN'],
+  ['金香起','김향기','KIM HYANG GI'],['崔秀英','최수영','SOOYOUNG'],['鄭有美','정유미','JUNG YU MI'],['吳漣序','오연서','OH YEON SEO'],['金南珠','김남주','KIM NAM JOO'],
+  ['金成鈴','김성령','KIM SUNG RYUNG'],['朴河宣','박하선','PARK HA SUN'],['李沇熹','이연희','LEE YEON HEE'],['南志鉉','남지현','NAM JI HYUN'],['姜漢娜','강한나','KANG HAN NA'],
+  ['李世榮','이세영','LEE SE YOUNG'],['陳世妍','진세연','JIN SE YEON'],['申惠善','신혜선','SHIN HYE SUN'],['崔江姬','최강희','CHOI KANG HEE'],['張熙軫','장희진','JANG HEE JIN'],
+  ['金知妍','김지연','KIM JI YEON'],['李多熙','이다희','LEE DA HEE'],['金賽綸','김새론','KIM SAE RON'],['吳智恩','오지은','OH JI EUN'],['朴敏英','박민영','PARK MIN YOUNG']
+];
+const actors = [
+  ['李敏鎬','이민호','LEE MIN HO'],['朴敘俊','박서준','PARK SEO JUN'],['孔劉','공유','GONG YOO'],['玄彬','현빈','HYUN BIN'],['池昌旭','지창욱','JI CHANG WOOK'],
+  ['李鐘碩','이종석','LEE JONG SUK'],['宋仲基','송중기','SONG JOONG KI'],['南柱赫','남주혁','NAM JOO HYUK'],['金宇彬','김우빈','KIM WOO BIN'],
+  ['朴寶劍','박보검','PARK BO GUM'],['徐康俊','서강준','SEO KANG JOON'],['安孝燮','안효섭','AHN HYO SEOP'],['李棟旭','이동욱','LEE DONG WOOK'],['金聖喆','김성철','KIM SUNG CHEOL'],
+  ['趙寅成','조인성','JO IN SUNG'],['姜棟元','강동원','KANG DONG WON'],['鄭敬淏','정경호','JUNG KYUNG HO'],['金宣虎','김선호','KIM SEON HO'],['李昇基','이승기','LEE SEUNG GI'],
+  ['劉亞仁','유아인','YOO AH IN'],['車銀優','차은우','CHA EUN WOO'],['邊佑錫','변우석','BYEON WOO SEOK'],['李到晛','이도현','LEE DO HYUN'],['丁海寅','정해인','JUNG HAE IN'],
+  ['姜河那','강하늘','KANG HA NEUL'],['任時完','임시완','IM SI WAN'],['朴炯植','박형식','PARK HYUNG SIK'],['金永大','김영대','KIM YOUNG DAE'],['金路雲','김로운','KIM RO WOON'],
+  ['金明洙','김명수','KIM MYUNG SOO'],['李準基','이준기','LEE JOON GI'],['池晟','지성','JI SUNG'],['李準','이준','LEE JOON'],['朴成勳','박성훈','PARK SUNG HOON'],
+  ['徐仁國','서인국','SEO IN GUK'],['柳演錫','유연석','YOO YEON SEOK'],['金志勳','김지훈','KIM JI HOON'],['吳正世','오정세','OH JUNG SE'],['崔宇植','최우식','CHOI WOO SHIK'],
+  ['安普賢','안보현','AHN BO HYUN'],['李陣郁','이진욱','LEE JIN WOOK'],['金材昱','김재욱','KIM JAE WOOK'],['朴海鎮','박해진','PARK HAE JIN'],['鄭雨盛','정우성','JUNG WOO SUNG']
+];
+
+function render(list, el){
+  el.innerHTML = list.map(n=>`
+  <div class="card">
+    <img src="" data-name="${n[2]}" onerror="this.src='https://via.placeholder.com/300x400'">
+    <div class="name">${n[0]}<br>${n[1]}<br>${n[2]}</div>
+    <button class="fav-btn" onclick="saveFav('${n[2]}')">加入收藏</button>
+  </div>`).join('');
+
+  // 從 Wikipedia / Wikimedia 自動抓近期照片（示範）
+  el.querySelectorAll('img[data-name]').forEach(img=>{
+    const q = encodeURIComponent(img.dataset.name);
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${q}`)
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        if(d && d.thumbnail && d.thumbnail.source){ img.src = d.thumbnail.source; }
+        else { img.src = 'https://via.placeholder.com/300x400'; }
+      })
+      .catch(()=> img.src='https://via.placeholder.com/300x400');
+  });
+}m/300x400'">
+    <div class="name">${n[0]}<br>${n[1]}<br>${n[2]}</div>
+    <button class="fav-btn" onclick="saveFav('${n[2]}')">加入收藏</button>
+  </div>`).join('');
+}
+
+render(idols, idolGrid);
+render(actresses, actressGrid);
+render(actors, actorGrid);
+
+function saveFav(name){
+  const fav = JSON.parse(localStorage.getItem('fav')||'[]');
+  if(!fav.includes(name)) fav.push(name);
+  localStorage.setItem('fav', JSON.stringify(fav));
+  alert(name+' 已加入收藏');
+}
+
+/* 拍照 */
+navigator.mediaDevices.getUserMedia({video:true}).then(s=>camera.srcObject=s);
+function takePhoto(){
+  photo.getContext('2d').drawImage(camera,0,0,240,320);
+}
+
+/* 應援牆 */
+function addSupport(){
+  const text = supportInput.value.trim();
+  if(!text) return;
+  const d = document.createElement('div');
+  d.className='message';
+  d.textContent = text;
+  supportList.prepend(d);
+  supportInput.value='';
+}
+</script>
+
+</body>
+</html>
