@@ -212,6 +212,12 @@
     <div class="grid" id="actorGrid"></div>
   </section>
 
+  <!-- Favorites -->
+  <section id="favorites">
+    <h2>我的收藏</h2>
+    <div class="grid" id="favGrid"></div>
+  </section>
+
   <!-- Polaroid -->
   <section id="polaroid">
     <h2>拍立得專區（即時拍照）</h2>
@@ -311,7 +317,7 @@ function render(list, el){
       })
       .catch(()=> img.src='https://via.placeholder.com/300x400');
   });
-}m/300x400'">
+}" onerror="this.src='https://via.placeholder.com/300x400'">
     <div class="name">${n[0]}<br>${n[1]}<br>${n[2]}</div>
     <button class="fav-btn" onclick="saveFav('${n[2]}')">加入收藏</button>
   </div>`).join('');
@@ -320,12 +326,31 @@ function render(list, el){
 render(idols, idolGrid);
 render(actresses, actressGrid);
 render(actors, actorGrid);
+renderFavs();
 
 function saveFav(name){
   const fav = JSON.parse(localStorage.getItem('fav')||'[]');
   if(!fav.includes(name)) fav.push(name);
   localStorage.setItem('fav', JSON.stringify(fav));
-  alert(name+' 已加入收藏');
+  renderFavs();
+}
+
+function renderFavs(){
+  const fav = JSON.parse(localStorage.getItem('fav')||'[]');
+  if(fav.length===0){ favGrid.innerHTML = '<p style="opacity:.7">尚未收藏任何人</p>'; return; }
+  favGrid.innerHTML = fav.map(n=>`
+    <div class="card">
+      <img src="" data-name="${n}" onerror="this.src='https://via.placeholder.com/300x400'">
+      <div class="name">${n}</div>
+    </div>`).join('');
+
+  favGrid.querySelectorAll('img[data-name]').forEach(img=>{
+    const q = encodeURIComponent(img.dataset.name);
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${q}`)
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{ if(d && d.thumbnail) img.src=d.thumbnail.source; })
+      .catch(()=>{});
+  });
 }
 
 /* 拍照 */
@@ -348,3 +373,4 @@ function addSupport(){
 
 </body>
 </html>
+
