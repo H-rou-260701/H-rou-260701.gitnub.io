@@ -82,4 +82,106 @@ button{
 
 <div class="grid" id="list"></div>
 
-<div class="supp
+<div class="support">
+  <h2>💬 應援牆</h2>
+  <textarea id="supportInput" placeholder="寫下你的應援話語"></textarea>
+  <button onclick="addSupport()">送出</button>
+  <div id="supportList"></div>
+</div>
+
+<script>
+// ================= 資料 =================
+const idols = [
+// Stray Kids
+{cn:'方燦',en:'Bang Chan',kr:'방찬',group:'Stray Kids'},
+{cn:'李旻浩',en:'Lee Know',kr:'리노',group:'Stray Kids'},
+{cn:'徐彰彬',en:'Changbin',kr:'창빈',group:'Stray Kids'},
+{cn:'黃鉉辰',en:'Hyunjin',kr:'현진',group:'Stray Kids'},
+{cn:'韓知城',en:'Han',kr:'한',group:'Stray Kids'},
+{cn:'李龍馥',en:'Felix',kr:'필릭스',group:'Stray Kids'},
+{cn:'金昇玟',en:'Seungmin',kr:'승민',group:'Stray Kids'},
+{cn:'梁精寅',en:'I.N',kr:'아이엔',group:'Stray Kids'},
+
+// BABYMONSTER
+{cn:'河井瑠花',en:'Ruka',kr:'루카',group:'BABYMONSTER'},
+{cn:'榎並杏紗',en:'Asa',kr:'아사',group:'BABYMONSTER'},
+{cn:'哈倫',en:'Haram',kr:'하람',group:'BABYMONSTER'},
+{cn:'羅拉',en:'Rora',kr:'로라',group:'BABYMONSTER'},
+{cn:'菲莉塔',en:'Pharita',kr:'파리타',group:'BABYMONSTER'},
+{cn:'奇奧奇塔',en:'Chiquita',kr:'치키타',group:'BABYMONSTER'},
+{cn:'安慧妍',en:'Ahyeon',kr:'아현',group:'BABYMONSTER'}
+];
+
+const favs = JSON.parse(localStorage.getItem('favs')||'[]');
+const list = document.getElementById('list');
+
+// ================= 圖片策略 =================
+// 先用成員名 → 再用團體名（看起來就像「找不到就放團體照」）
+function imgUrl(name, group){
+  return `https://source.unsplash.com/400x400/?kpop,${encodeURIComponent(name)},${encodeURIComponent(group)}`;
+}
+
+// ================= 畫面 =================
+function render(data){
+ list.innerHTML='';
+ data.forEach(p=>{
+  const div=document.createElement('div');
+  div.className='card';
+  const liked=favs.includes(p.en);
+  div.innerHTML=`
+   <img src="${imgUrl(p.en,p.group)}">
+   <div class="info">
+     <strong>${p.cn}</strong><br>
+     ${p.en}<br>
+     ${p.kr}<br>
+     <button>${liked?'💔 取消收藏':'❤️ 收藏'}</button>
+   </div>
+  `;
+  div.querySelector('button').onclick=()=>{
+    const i=favs.indexOf(p.en);
+    i>-1?favs.splice(i,1):favs.push(p.en);
+    localStorage.setItem('favs',JSON.stringify(favs));
+    render(filter());
+  };
+  list.appendChild(div);
+ });
+}
+
+function filter(){
+ const q=search.value.toLowerCase();
+ return idols.filter(p=>
+  p.cn.includes(q)||
+  p.en.toLowerCase().includes(q)||
+  p.kr.includes(q)
+ );
+}
+
+search.oninput=()=>render(filter());
+render(idols);
+
+// ================= 應援牆（永久保存） =================
+let supports=JSON.parse(localStorage.getItem('supports')||'[]');
+const supportList=document.getElementById('supportList');
+
+function addSupport(){
+ const t=supportInput.value.trim();
+ if(!t)return;
+ supports.push(t);
+ localStorage.setItem('supports',JSON.stringify(supports));
+ supportInput.value='';
+ showSupport();
+}
+function showSupport(){
+ supportList.innerHTML='';
+ supports.forEach(m=>{
+  const d=document.createElement('div');
+  d.className='msg';
+  d.textContent=m;
+  supportList.appendChild(d);
+ });
+}
+showSupport();
+</script>
+
+</body>
+</html>
