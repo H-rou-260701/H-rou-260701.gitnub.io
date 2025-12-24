@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>K-POP Fan Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#141E30,#243B55);
+  color:white;
+}
+header{
+  text-align:center;
+  padding:20px;
+  background:rgba(0,0,0,.4);
+}
+input{
+  padding:10px;
+  width:80%;
+  max-width:420px;
+  border-radius:20px;
+  border:none;
+}
+.grid{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+}
+.card{
+  background:rgba(255,255,255,.12);
+  border-radius:16px;
+  overflow:hidden;
+}
+.card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+.card .info{
+  padding:12px;
+  text-align:center;
+}
+.card button{
+  margin-top:8px;
+  border:none;
+  border-radius:20px;
+  padding:6px 14px;
+  cursor:pointer;
+  background:#ff5fa2;
+  color:white;
+}
+.support{
+  margin:20px;
+  padding:15px;
+  background:rgba(0,0,0,.35);
+  border-radius:16px;
+}
+.support textarea{
+  width:100%;
+  height:60px;
+  border-radius:10px;
+  border:none;
+  padding:8px;
+}
+.support .msg{
+  background:rgba(255,255,255,.15);
+  margin-top:6px;
+  padding:8px;
+  border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎤 K-POP Fan Hub</h1>
+  <input id="search" placeholder="搜尋 Idol（中文 / English / 한국어）">
+</header>
+
+<div class="grid" id="list"></div>
+
+<div class="support">
+  <h2>💬 應援牆</h2>
+  <textarea id="supportInput" placeholder="寫下你的應援話語"></textarea>
+  <button onclick="addSupport()">送出</button>
+  <div id="supportList"></div>
+</div>
+
+<script>
+// ===== Idol 資料 =====
+const idols = [
+
+// ===== Stray Kids =====
+{ cn:'方燦', en:'Bang Chan', kr:'방찬' },
+{ cn:'李旻浩', en:'Lee Know', kr:'리노' },
+{ cn:'徐彰彬', en:'Changbin', kr:'창빈' },
+{ cn:'黃鉉辰', en:'Hyunjin', kr:'현진' },
+{ cn:'韓知城', en:'Han', kr:'한' },
+{ cn:'李龍馥', en:'Felix', kr:'필릭스' },
+{ cn:'金昇玟', en:'Seungmin', kr:'승민' },
+{ cn:'梁精寅', en:'I.N', kr:'아이엔' },
+
+ // BTS
+ {cn:'金南俊',en:'RM',kr:'김남준'},
+ {cn:'金碩珍',en:'Jin',kr:'김석진'},
+ {cn:'閔玧其',en:'SUGA',kr:'민윤기'},
+ {cn:'鄭號錫',en:'j-hope',kr:'정호석'},
+ {cn:'朴智旻',en:'Jimin',kr:'박지민'},
+ {cn:'金泰亨',en:'V',kr:'김태형'},
+ {cn:'田柾國',en:'Jungkook',kr:'전정국'},
+
+ // BLACKPINK
+ {cn:'金智秀',en:'Jisoo',kr:'김지수'},
+ {cn:'金珍妮',en:'Jennie',kr:'김제니'},
+ {cn:'朴彩英',en:'Rosé',kr:'박채영'},
+ {cn:'Lisa',en:'Lisa',kr:'리사'},
+
+ // aespa
+ {cn:'劉知珉',en:'Karina',kr:'유지민'},
+ {cn:'金旼炡',en:'Winter',kr:'김민정'},
+ {cn:'寧寧',en:'Ningning',kr:'닝닝'},
+ {cn:'吉賽兒',en:'Giselle',kr:'지젤'},
+
+ // IVE
+ {cn:'張員瑛',en:'Wonyoung',kr:'장원영'},
+ {cn:'安兪真',en:'Yujin',kr:'안유진'},
+ {cn:'金志垣',en:'Liz',kr:'김지원'},
+ {cn:'李瑞',en:'Leeseo',kr:'이서'},
+ {cn:'直井憐',en:'Rei',kr:'레이'},
+ {cn:'金秋天',en:'Gaeul',kr:'가을'},
+
+ // NewJeans
+ {cn:'閔智允',en:'Minji',kr:'민지'},
+ {cn:'河仁智',en:'Hanni',kr:'하니'},
+ {cn:'姜海潾',en:'Haerin',kr:'해린'},
+ {cn:'金敏智',en:'Danielle',kr:'다니엘'},
+ {cn:'李惠仁',en:'Hyein',kr:'혜인'},
+
+ // (G)I-DLE
+ {cn:'田小娟',en:'Soyeon',kr:'전소연'},
+ {cn:'趙美延',en:'Miyeon',kr:'미연'},
+ {cn:'宋雨琦',en:'Yuqi',kr:'우기'},
+ {cn:'葉舒華',en:'Shuhua',kr:'슈화'},
+ {cn:'Minnie',en:'Minnie',kr:'민니'},
+
+ // Solo
+ {cn:'李知恩',en:'IU',kr:'아이유'},
+ {cn:'金太妍',en:'Taeyeon',kr:'태연'},
+ {cn:'金泫雅',en:'HyunA',kr:'현아'},
+ {cn:'禹智皓',en:'Zico',kr:'지코'},
+ {cn:'權志龍',en:'G-Dragon',kr:'지드래곤'}
+];
+
+const favs = JSON.parse(localStorage.getItem('favs')||'[]');
+const list = document.getElementById('list');
+
+// ===== Google 圖片隨機 =====
+function imgUrl(name){
+ return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(name)}&t=${Date.now()}`;
+}
+
+function render(data){
+ list.innerHTML='';
+ data.forEach(p=>{
+  const div=document.createElement('div');
+  div.className='card';
+  div.innerHTML=`
+   <img src="${imgUrl(p.en)}">
+   <div class="info">
+     <strong>${p.cn}</strong><br>
+     ${p.en}<br>
+     ${p.kr}<br>
+     <button>${favs.includes(p.en)?'💔 取消收藏':'❤️ 收藏'}</button>
+   </div>
+  `;
+  div.querySelector('button').onclick=()=>{
+   const i=favs.indexOf(p.en);
+   i>-1?favs.splice(i,1):favs.push(p.en);
+   localStorage.setItem('favs',JSON.stringify(favs));
+   render(filter());
+  };
+  list.appendChild(div);
+ });
+}
+
+function filter(){
+ const q=search.value.toLowerCase();
+ return idols.filter(p=>
+  p.cn.includes(q)||
+  p.en.toLowerCase().includes(q)||
+  p.kr.includes(q)
+ );
+}
+search.oninput=()=>render(filter());
+render(idols);
+
+// ===== 應援牆 =====
+let supports=JSON.parse(localStorage.getItem('supports')||'[]');
+const supportList=document.getElementById('supportList');
+
+function addSupport(){
+ const t=supportInput.value.trim();
+ if(!t)return;
+ supports.push(t);
+ localStorage.setItem('supports',JSON.stringify(supports));
+ supportInput.value='';
+ showSupport();
+}
+function showSupport(){
+ supportList.innerHTML='';
+ supports.forEach(m=>{
+  const d=document.createElement('div');
+  d.className='msg';
+  d.textContent=m;
+  supportList.appendChild(d);
+ });
+}
+showSupport();
+</script>
+
+</body>
+</html>
