@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>K-POP Fan Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
+}
+header{
+  padding:20px;
+  text-align:center;
+  background:rgba(0,0,0,.4);
+}
+input{
+  padding:10px;
+  width:80%;
+  max-width:420px;
+  border-radius:20px;
+  border:none;
+}
+.grid{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+}
+.card{
+  background:rgba(255,255,255,.12);
+  border-radius:16px;
+  overflow:hidden;
+}
+.card img{
+  width:100%;
+  height:230px;
+  object-fit:cover;
+}
+.info{
+  padding:12px;
+  text-align:center;
+}
+button{
+  margin-top:8px;
+  border:none;
+  border-radius:20px;
+  padding:6px 14px;
+  cursor:pointer;
+  background:#ff5fa2;
+  color:white;
+}
+.support{
+  margin:20px;
+  padding:15px;
+  background:rgba(0,0,0,.35);
+  border-radius:16px;
+}
+.support textarea{
+  width:100%;
+  height:60px;
+  border-radius:10px;
+  border:none;
+  padding:8px;
+}
+.msg{
+  background:rgba(255,255,255,.15);
+  margin-top:6px;
+  padding:8px;
+  border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎤 K-POP Fan Hub</h1>
+  <input id="search" placeholder="搜尋 Idol（中文 / English / 한국어）">
+</header>
+
+<div class="grid" id="list"></div>
+
+<div class="supp
