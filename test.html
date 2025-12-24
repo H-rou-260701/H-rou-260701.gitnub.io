@@ -45,9 +45,9 @@
     <div class="search-box"><input id="searchInput" placeholder="搜尋 idol / actor / actress"></div>
   </section>
 
-  <section id="idols"><h2>Idols（<span id="idolCount"></span>）</h2><div id="idolGrid" class="grid"></div></section>
-  <section id="actress"><h2>Actress（<span id="actressCount"></span>）</h2><div id="actressGrid" class="grid"></div></section>
-  <section id="actor"><h2>Actor（<span id="actorCount"></span>）</h2><div id="actorGrid" class="grid"></div></section>
+  <section id="idols"><h2>Idols</h2><div id="idolGrid" class="grid"></div></section>
+  <section id="actress"><h2>Actress</h2><div id="actressGrid" class="grid"></div></section>
+  <section id="actor"><h2>Actor</h2><div id="actorGrid" class="grid"></div></section>
 
   <section id="cheer">
     <h2>應援牆</h2>
@@ -109,8 +109,6 @@ const actresses = [
 const actors = [
   // 主流與中生代
   ['孔劉','공유','Gong Yoo'],['李敏鎬','이민호','Lee Min-ho actor'],['朴敘俊','박서준','Park Seo-joon'],['玄彬','현빈','Hyun Bin'],['宋仲基','송중기','Song Joong-ki'],
-  ['柳俊烈','류준열','Ryu Jun-yeol'],['金南佶','김남길','Kim Nam-gil'],['吳政世','오정세','Oh Jung-se'],['金成均','김성균','Kim Sung-kyun'],
-  ['趙震雄','조진웅','Jo Jin-woong'],['朴成雄','박성웅','Park Sung-woong'],['張赫','장혁','Jang Hyuk'],['權相佑','권상우','Kwon Sang-woo'],['蘇志燮','소지섭','So Ji-sub'],['趙寅成','조인성','Jo In-sung'],
 
   // 年輕男演員
   ['南柱赫','남주혁','Nam Joo-hyuk'],['朴炯植','박형식','Park Hyung-sik'],['池昌旭','지창욱','Ji Chang-wook'],['李鍾碩','이종석','Lee Jong-suk'],['徐康俊','서강준','Seo Kang-joon'],
@@ -122,7 +120,7 @@ const actors = [
   ['李宰旭','이재욱','Lee Jae-wook'],['宋江','송강','Song Kang'],['洪京','홍경','Hong Kyung'],['姜勳','강훈','Kang Hoon'],['崔顯旭','최현욱','Choi Hyun-wook'],
 
   // 其他
-  ['金宇彬','김우빈','Kim Woo-bin'],['姜棟元','강동원','Kang Dong-won'],['河正宇','하정우','Ha Jung-woo'],['李準基','이준기','Lee Joon-gi'],['李東旭','이동욱','Lee Dong-wook'],['池晟','지성','Ji Sung'],['李秉憲','이병헌','Lee Byung-hun']
+  ['金宇彬','김우빈','Kim Woo-bin'],['河正宇','하정우','Ha Jung-woo'],['李準基','이준기','Lee Joon-gi'],['李東旭','이동욱','Lee Dong-wook'],
 ];
 
 // ===== Render（避免使用保留字與新語法） =====
@@ -148,16 +146,7 @@ function render(list, el){
           if(d && d.thumbnail && d.thumbnail.source){
             img.src = d.thumbnail.source;
           }else{
-            // 若無個人照片，顯示團體合照或 Logo（示範用）
-            if(q.toLowerCase().indexOf('stray kids')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/8/8d/Stray_Kids_logo.png'; }
-            else if(q.toLowerCase().indexOf('bts')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/0/0d/BTS_logo_%282017%29.png'; }
-            else if(q.toLowerCase().indexOf('blackpink')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/0/05/Blackpink_logo.png'; }
-            else if(q.toLowerCase().indexOf('aespa')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/5/5e/Aespa_logo.png'; }
-            else if(q.toLowerCase().indexOf('ive')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/7/77/Ive_logo.png'; }
-            else if(q.toLowerCase().indexOf('newjeans')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/9/9e/NewJeans_logo.png'; }
-            else if(q.toLowerCase().indexOf('le sserafim')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/6/6f/Le_Sserafim_logo.png'; }
-            else if(q.toLowerCase().indexOf('gidle')>-1 || q.toLowerCase().indexOf('g-idle')>-1){ img.src='https://upload.wikimedia.org/wikipedia/commons/3/3a/%28G%29I-DLE_logo.png'; }
-            else { img.src='https://via.placeholder.com/300x400?text=No+Image'; }
+            img.src = 'https://via.placeholder.com/300x400?text=No+Image';
           }
         })
         .catch(function(){ img.src='https://via.placeholder.com/300x400?text=No+Image'; });
@@ -169,9 +158,6 @@ function renderAll(){
   render(idols, idolGrid);
   render(actresses, actressGrid);
   render(actors, actorGrid);
-  idolCount.textContent = idols.length;
-  actressCount.textContent = actresses.length;
-  actorCount.textContent = actors.length;
   renderFavs();
 }
 
@@ -200,15 +186,6 @@ function renderFavs(){
   if(!fav.length){ favGrid.innerHTML='<p style="opacity:.7">尚未收藏任何人</p>'; return; }
   var h='';
   for(var i=0;i<fav.length;i++){
-    h += '<div class="card">'
-      + '<div class="name">'+ fav[i] +'</div>'
-      + '<button class="fav-btn" data-remove="'+ fav[i] +'">移除收藏</button>'
-      + '</div>';
-  }
-  favGrid.innerHTML = h;
-}
-  var h='';
-  for(var i=0;i<fav.length;i++){
     h += '<div class="card"><div class="name">'+ fav[i] +'</div></div>';
   }
   favGrid.innerHTML = h;
@@ -230,19 +207,7 @@ document.addEventListener('DOMContentLoaded', function(){
   renderAll();
   searchInput.addEventListener('input', doSearch);
   document.body.addEventListener('click', function(e){
-    if(e.target && e.target.className.indexOf('fav-btn')>-1){
-      if(e.target.getAttribute('data-name')){
-        saveFav(e.target.getAttribute('data-name'));
-      }
-      if(e.target.getAttribute('data-remove')){
-        var name = e.target.getAttribute('data-remove');
-        var fav = JSON.parse(localStorage.getItem('fav')||'[]');
-        fav = fav.filter(function(f){ return f!==name; });
-        localStorage.setItem('fav', JSON.stringify(fav));
-        renderFavs();
-      }
-    }
-  }); }
+    if(e.target && e.target.className.indexOf('fav-btn')>-1){ saveFav(e.target.getAttribute('data-name')); }
   });
 });
 </script>
