@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>K-POP Fan Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--pink:#ff4fd8;--purple:#7b5cff;--card:rgba(255,255,255,.12);--glass:blur(12px)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Poppins,sans-serif;background:linear-gradient(120deg,#0f0f1a,#1b1b3a);color:#fff}
+    header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;position:sticky;top:0;background:rgba(0,0,0,.4);backdrop-filter:var(--glass)}
+    header h1{margin:0;background:linear-gradient(45deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    nav a{margin-left:16px;color:#fff;text-decoration:none;font-size:.9rem;opacity:.8}
+    nav a:hover{opacity:1}
+    .container{padding:32px}
+    section{margin-bottom:48px}
+    h2{border-left:4px solid var(--pink);padding-left:12px}
+    .search-box input{width:100%;max-width:420px;padding:12px 16px;border-radius:999px;border:none}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
+    .card{background:var(--card);backdrop-filter:var(--glass);border-radius:16px;padding:12px;text-align:center}
+    .card img{width:100%;height:240px;object-fit:cover;border-radius:12px;margin-bottom:8px}
+    .name{font-size:.85rem;line-height:1.4;word-break:break-word}
+    .fav-btn{margin-top:8px;padding:6px 12px;border:none;border-radius:999px;background:linear-gradient(45deg,var(--pink),var(--purple));color:#fff;cursor:pointer;font-size:.75rem}
+    textarea{width:100%;border:none;border-radius:12px;padding:12px}
+    footer{text-align:center;padding:24px;font-size:.75rem;opacity:.6}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>K-POP Fan Hub</h1>
+  <nav>
+    <a href="#search">Search</a>
+    <a href="#idols">Idols</a>
+    <a href="#actress">Actress</a>
+    <a href="#actor">Actor</a>
+    <a href="#cheer">應援牆</a>
+    <a href="#favorites">收藏</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <section id="search">
+    <h2>Search</h2>
+    <div class="search-box">
+      <input id="searchInput" placeholder="搜尋 idol / actor / actress">
+    </div>
+  </section>
+
+  <section id="idols"><h2>Idols</h2><div id="idolGrid" class="grid"></div></section>
+  <section id="actress"><h2>Actress</h2><div id="actressGrid" class="grid"></div></section>
+  <section id="actor"><h2>Actor</h2><div id="actorGrid" class="grid"></div></section>
+
+  <section id="cheer">
+    <h2>應援牆</h2>
+    <div class="card">
+      <textarea id="cheerInput" placeholder="寫下你的應援文字…"></textarea>
+      <button class="fav-btn" onclick="addCheer()">送出應援</button>
+    </div>
+    <div id="cheerList" class="grid" style="margin-top:16px"></div>
+  </section>
+
+  <section id="favorites">
+    <h2>我的收藏</h2>
+    <div id="favGrid" class="grid"></div>
+  </section>
+
+</div>
+
+<footer>© 2025 K-POP Fan Hub（作業示範）</footer>
+
+<script>
+// ===== 資料（略，保留你原本的）=====
+const idols = [
+  ['RM','알엠','RM BTS'],['Jin','진','Jin BTS'],['Jungkook','정국','Jungkook BTS']
+];
+const actresses = [
+  ['宋慧喬','송혜교','Song Hye-kyo']
+];
+const actors = [
+  ['孔劉','공유','Gong Yoo']
+];
+
+// ===== Render =====
+function render(list, el){
+  var html = '';
+  for(var i=0;i<list.length;i++){
+    var n = list[i];
+    html += '<div class="card">'
+      + '<img data-q="'+ n[2] +'">'
+      + '<div class="name">'+ n[0] +'<br>'+ n[1] +'<br>'+ n[2] +'</div>'
+      + '<button class="fav-btn" data-name="'+ n[2] +'">加入收藏</button>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+
+  var imgs = el.querySelectorAll('img');
+  for(var j=0;j<imgs.length;j++){
+    imgs[j].src = 'https://via.placeholder.com/300x400?text=KPOP';
+  }
+}
+
+function renderAll(){
+  render(idols, idolGrid);
+  render(actresses, actressGrid);
+  render(actors, actorGrid);
+  renderFavs();
+}
+
+// ===== 搜尋 =====
+function doSearch(){
+  var q = searchInput.value.toLowerCase();
+  function f(list){
+    return list.filter(function(n){
+      return n[0].toLowerCase().indexOf(q)>-1 || n[2].toLowerCase().indexOf(q)>-1;
+    });
+  }
+  render(f(idols), idolGrid);
+  render(f(actresses), actressGrid);
+  render(f(actors), actorGrid);
+}
+
+// ===== 收藏 =====
+function saveFav(name){
+  var fav = JSON.parse(localStorage.getItem('fav')||'[]');
+  if(fav.indexOf(name)===-1) fav.push(name);
+  localStorage.setItem('fav', JSON.stringify(fav));
+  renderFavs();
+}
+
+function renderFavs(){
+  var fav = JSON.parse(localStorage.getItem('fav')||'[]');
+  if(!fav.length){
+    favGrid.innerHTML='<p style="opacity:.7">尚未收藏任何人</p>';
+    return;
+  }
+  var h='';
+  for(var i=0;i<fav.length;i++){
+    h += '<div class="card"><div class="name">'+ fav[i] +'</div></div>';
+  }
+  favGrid.innerHTML = h;
+}
+
+// ===== 應援牆（永久存在）=====
+function addCheer(){
+  var t = cheerInput.value.trim();
+  if(!t) return;
+
+  var cheers = JSON.parse(localStorage.getItem('cheers') || '[]');
+  cheers.unshift(t);
+  localStorage.setItem('cheers', JSON.stringify(cheers));
+
+  cheerInput.value = '';
+  renderCheers();
+}
+
+function renderCheers(){
+  var cheers = JSON.parse(localStorage.getItem('cheers') || '[]');
+  cheerList.innerHTML = '';
+
+  for(var i=0;i<cheers.length;i++){
+    var d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = '<div class="name">'+ cheers[i] +'</div>';
+    cheerList.appendChild(d);
+  }
+}
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function(){
+  renderAll();
+  renderCheers();
+  searchInput.addEventListener('input', doSearch);
+
+  document.body.addEventListener('click', function(e){
+    if(e.target && e.target.className.indexOf('fav-btn')>-1){
+      saveFav(e.target.getAttribute('data-name'));
+    }
+  });
+});
+</script>
+
+</body>
+</html>
