@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>K-POP Fan Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#141E30,#243B55);
+  color:white;
+}
+header{
+  text-align:center;
+  padding:20px;
+  background:rgba(0,0,0,.4);
+}
+input{
+  padding:10px;
+  width:80%;
+  max-width:420px;
+  border-radius:20px;
+  border:none;
+}
+.grid{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+}
+.card{
+  background:rgba(255,255,255,.12);
+  border-radius:16px;
+  overflow:hidden;
+}
+.card img{
+  width:100%;
+  height:230px;
+  object-fit:cover;
+}
+.info{
+  padding:12px;
+  text-align:center;
+}
+button{
+  margin-top:8px;
+  border:none;
+  border-radius:20px;
+  padding:6px 14px;
+  cursor:pointer;
+  background:#ff5fa2;
+  color:white;
+}
+.support{
+  margin:20px;
+  padding:15px;
+  background:rgba(0,0,0,.35);
+  border-radius:16px;
+}
+.support textarea{
+  width:100%;
+  height:60px;
+  border-radius:10px;
+  border:none;
+  padding:8px;
+}
+.msg{
+  background:rgba(255,255,255,.15);
+  margin-top:6px;
+  padding:8px;
+  border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎤 K-POP Fan Hub</h1>
+  <input id="search" placeholder="搜尋 Idol（中文 / English / 한국어）">
+</header>
+
+<div class="grid" id="list"></div>
+
+<div class="support">
+  <h2>💬 應援牆</h2>
+  <textarea id="supportInput" placeholder="寫下你的應援話語"></textarea>
+  <button onclick="addSupport()">送出</button>
+  <div id="supportList"></div>
+</div>
+
+<script>
+// ================= Idol 資料（含本地圖片路徑） =================
+const idols = [
+// Stray Kids
+{cn:'方燦',en:'Bang Chan',kr:'방찬',img:'img/straykids/bangchan.jpg'},
+{cn:'李旻浩',en:'Lee Know',kr:'리노',img:'img/straykids/leeknow.jpg'},
+{cn:'徐彰彬',en:'Changbin',kr:'창빈',img:'img/straykids/changbin.jpg'},
+{cn:'黃鉉辰',en:'Hyunjin',kr:'현진',img:'img/straykids/hyunjin.jpg'},
+{cn:'韓知城',en:'Han',kr:'한',img:'img/straykids/han.jpg'},
+{cn:'李龍馥',en:'Felix',kr:'필릭스',img:'img/straykids/felix.jpg'},
+{cn:'金昇玟',en:'Seungmin',kr:'승민',img:'img/straykids/seungmin.jpg'},
+{cn:'梁精寅',en:'I.N',kr:'아이엔',img:'img/straykids/in.jpg'},
+
+// BABYMONSTER
+{cn:'河井瑠花',en:'Ruka',kr:'루카',img:'img/babymonster/ruka.jpg'},
+{cn:'榎並杏紗',en:'Asa',kr:'아사',img:'img/babymonster/asa.jpg'},
+{cn:'哈倫',en:'Haram',kr:'하람',img:'img/babymonster/haram.jpg'},
+{cn:'羅拉',en:'Rora',kr:'로라',img:'img/babymonster/rora.jpg'},
+{cn:'菲莉塔',en:'Pharita',kr:'파리타',img:'img/babymonster/pharita.jpg'},
+{cn:'奇奧奇塔',en:'Chiquita',kr:'치키타',img:'img/babymonster/chiquita.jpg'},
+{cn:'安慧妍',en:'Ahyeon',kr:'아현',img:'img/babymonster/ahyeon.jpg'}
+];
+
+const favs = JSON.parse(localStorage.getItem('favs')||'[]');
+const list = document.getElementById('list');
+
+// ================= 畫面 =================
+function render(data){
+ list.innerHTML='';
+ data.forEach(p=>{
+  const div=document.createElement('div');
+  div.className='card';
+  const liked=favs.includes(p.en);
+  div.innerHTML=`
+   <img src="${p.img}" alt="${p.en}">
+   <div class="info">
+     <strong>${p.cn}</strong><br>
+     ${p.en}<br>
+     ${p.kr}<br>
+     <button>${liked?'💔 取消收藏':'❤️ 收藏'}</button>
+   </div>
+  `;
+  div.querySelector('button').onclick=()=>{
+    const i=favs.indexOf(p.en);
+    i>-1?favs.splice(i,1):favs.push(p.en);
+    localStorage.setItem('favs',JSON.stringify(favs));
+    render(filter());
+  };
+  list.appendChild(div);
+ });
+}
+
+function filter(){
+ const q=search.value.toLowerCase();
+ return idols.filter(p=>
+  p.cn.includes(q)||
+  p.en.toLowerCase().includes(q)||
+  p.kr.includes(q)
+ );
+}
+
+search.oninput=()=>render(filter());
+render(idols);
+
+// ================= 應援牆（永久保存） =================
+let supports=JSON.parse(localStorage.getItem('supports')||'[]');
+const supportList=document.getElementById('supportList');
+
+function addSupport(){
+ const t=supportInput.value.trim();
+ if(!t)return;
+ supports.push(t);
+ localStorage.setItem('supports',JSON.stringify(supports));
+ supportInput.value='';
+ showSupport();
+}
+function showSupport(){
+ supportList.innerHTML='';
+ supports.forEach(m=>{
+  const d=document.createElement('div');
+  d.className='msg';
+  d.textContent=m;
+  supportList.appendChild(d);
+ });
+}
+showSupport();
+</script>
+
+</body>
+</html>
