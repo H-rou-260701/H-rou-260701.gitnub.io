@@ -1,91 +1,38 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>Kpop 點擊遊戲 - 可愛版</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Arial', sans-serif;
-      overflow: hidden;
-    }
-    #gameArea {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-    }
-    .idol {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      cursor: pointer;
-      border-radius: 10px;
-      transition: transform 0.2s;
-    }
-    #scoreBoard {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 24px;
-      color: white;
-      text-shadow: 1px 1px 3px black;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>K-pop 西瓜點擊遊戲</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    background-image: url('https://images.unsplash.com/photo-1533234045736-5147a4f0208d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8a3BvcHxlbnwwfHx8fDE2OTczMzUyMjU&ixlib=rb-4.0.3&q=80&w=1080'); 
+    /* 這裡換成你的 K-pop 背景圖片 */
+    background-size: cover;
+    background-position: center;
+  }
+
+  #score {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    color: white;
+    text-shadow: 2px 2px 5px black;
+  }
+
+  #watermelon {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+</style>
 </head>
 <body>
-  <div id="scoreBoard">得分: 0</div>
-  <div id="gameArea"></div>
+  <div id="score"
 
-  <script>
-    const gameArea = document.getElementById('gameArea');
-    const scoreBoard = document.getElementById('scoreBoard');
-    let score = 0;
-
-    // 無版權可愛圖案 (免費圖庫圖)
-    const idolImages = [
-      'https://cdn.pixabay.com/photo/2016/03/31/19/58/cat-1291007_1280.png',
-      'https://cdn.pixabay.com/photo/2014/04/03/10/32/penguin-312690_1280.png',
-      'https://cdn.pixabay.com/photo/2017/01/31/13/14/bear-2024141_1280.png',
-      'https://cdn.pixabay.com/photo/2013/07/13/11/47/owl-159017_1280.png',
-      'https://cdn.pixabay.com/photo/2012/04/13/21/07/puppy-33630_1280.png'
-    ];
-
-    function createIdol() {
-      const img = document.createElement('img');
-      img.src = idolImages[Math.floor(Math.random() * idolImages.length)];
-      img.classList.add('idol');
-      
-      img.style.top = Math.random() * (window.innerHeight - 80) + 'px';
-      img.style.left = Math.random() * (window.innerWidth - 80) + 'px';
-      
-      gameArea.appendChild(img);
-
-      img.addEventListener('click', () => {
-        score++;
-        scoreBoard.textContent = '得分: ' + score;
-        img.remove();
-      });
-
-      moveIdol(img);
-    }
-
-    function moveIdol(img) {
-      setInterval(() => {
-        img.style.top = Math.random() * (window.innerHeight - 80) + 'px';
-        img.style.left = Math.random() * (window.innerWidth - 80) + 'px';
-      }, 1000);
-    }
-
-    for (let i = 0; i < 5; i++) {
-      createIdol();
-    }
-
-    setInterval(() => {
-      createIdol();
-    }, 3000);
-  </script>
-</body>
-</html>
