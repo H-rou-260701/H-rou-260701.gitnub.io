@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Kpop 點擊遊戲</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://i.imgur.com/3e6xOdx.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+    #gameArea {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    .idol {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+    #scoreBoard {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      color: white;
+      text-shadow: 1px 1px 3px black;
+    }
+  </style>
+</head>
+<body>
+  <div id="scoreBoard">得分: 0</div>
+  <div id="gameArea"></div>
+
+  <script>
+    const gameArea = document.getElementById('gameArea');
+    const scoreBoard = document.getElementById('scoreBoard');
+    let score = 0;
+
+    // 你可以換成你自己的 K-pop 成員照片
+    const idolImages = [
+      'https://i.imgur.com/1.jpg',
+      'https://i.imgur.com/2.jpg',
+      'https://i.imgur.com/3.jpg',
+      'https://i.imgur.com/4.jpg',
+      'https://i.imgur.com/5.jpg'
+    ];
+
+    function createIdol() {
+      const img = document.createElement('img');
+      img.src = idolImages[Math.floor(Math.random() * idolImages.length)];
+      img.classList.add('idol');
+      
+      // 隨機位置
+      img.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+      img.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+      
+      gameArea.appendChild(img);
+
+      // 點擊加分
+      img.addEventListener('click', () => {
+        score++;
+        scoreBoard.textContent = '得分: ' + score;
+        img.remove(); // 點了之後消失
+      });
+
+      // 讓圖片動起來
+      moveIdol(img);
+    }
+
+    function moveIdol(img) {
+      setInterval(() => {
+        img.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+        img.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+      }, 1000); // 每秒移動一次
+    }
+
+    // 一開始生成 5 個
+    for (let i = 0; i < 5; i++) {
+      createIdol();
+    }
+
+    // 每 3 秒增加新的 idol
+    setInterval(() => {
+      createIdol();
+    }, 3000);
+  </script>
+</body>
+</html>
