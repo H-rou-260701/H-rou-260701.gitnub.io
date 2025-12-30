@@ -2,12 +2,12 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>Kpop 點擊遊戲</title>
+  <title>Kpop 點擊遊戲 - 可愛版</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: url('https://i.imgur.com/3e6xOdx.jpg') no-repeat center center fixed;
+      background: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Arial', sans-serif;
       overflow: hidden;
@@ -19,8 +19,8 @@
     }
     .idol {
       position: absolute;
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       cursor: pointer;
       border-radius: 10px;
       transition: transform 0.2s;
@@ -44,13 +44,13 @@
     const scoreBoard = document.getElementById('scoreBoard');
     let score = 0;
 
-    // 你可以換成你自己的 K-pop 成員照片
+    // 無版權可愛圖案 (免費圖庫圖)
     const idolImages = [
-      'https://i.imgur.com/1.jpg',
-      'https://i.imgur.com/2.jpg',
-      'https://i.imgur.com/3.jpg',
-      'https://i.imgur.com/4.jpg',
-      'https://i.imgur.com/5.jpg'
+      'https://cdn.pixabay.com/photo/2016/03/31/19/58/cat-1291007_1280.png',
+      'https://cdn.pixabay.com/photo/2014/04/03/10/32/penguin-312690_1280.png',
+      'https://cdn.pixabay.com/photo/2017/01/31/13/14/bear-2024141_1280.png',
+      'https://cdn.pixabay.com/photo/2013/07/13/11/47/owl-159017_1280.png',
+      'https://cdn.pixabay.com/photo/2012/04/13/21/07/puppy-33630_1280.png'
     ];
 
     function createIdol() {
@@ -58,36 +58,31 @@
       img.src = idolImages[Math.floor(Math.random() * idolImages.length)];
       img.classList.add('idol');
       
-      // 隨機位置
-      img.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-      img.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+      img.style.top = Math.random() * (window.innerHeight - 80) + 'px';
+      img.style.left = Math.random() * (window.innerWidth - 80) + 'px';
       
       gameArea.appendChild(img);
 
-      // 點擊加分
       img.addEventListener('click', () => {
         score++;
         scoreBoard.textContent = '得分: ' + score;
-        img.remove(); // 點了之後消失
+        img.remove();
       });
 
-      // 讓圖片動起來
       moveIdol(img);
     }
 
     function moveIdol(img) {
       setInterval(() => {
-        img.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-        img.style.left = Math.random() * (window.innerWidth - 100) + 'px';
-      }, 1000); // 每秒移動一次
+        img.style.top = Math.random() * (window.innerHeight - 80) + 'px';
+        img.style.left = Math.random() * (window.innerWidth - 80) + 'px';
+      }, 1000);
     }
 
-    // 一開始生成 5 個
     for (let i = 0; i < 5; i++) {
       createIdol();
     }
 
-    // 每 3 秒增加新的 idol
     setInterval(() => {
       createIdol();
     }, 3000);
